@@ -60,12 +60,10 @@ table {
     outline: 0;
 }
 
-/* Always show a vertical scrollbar, even when there is no scrolling */
 html {
     overflow-y: scroll;
-}
-
-html {
+    font-size: 14px;
+    font-family: Verdana, Geneva, sans-serif;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
 }
@@ -113,3 +111,7 @@ textarea {
 /* ---------------------------------------------------------------------
  Base Styles
 ------------------------------------------------------------------------ */
+.main {
+    width: 960px;
+    margin: 0 auto;
+}
