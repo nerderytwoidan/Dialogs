@@ -36,8 +36,8 @@
 <body>
     <div class="main">
         <div class="btnWrap">
-            <button class="dialogToggle" data-dialog-target="js-dialog-test">Dialog 1</button>
-            <button class="dialogToggle" data-dialog-target="js-dialog-lol">Dialog 2</button>
+            <button class="dialogToggle" data-dialog-target="js-dialog-test">Standard dialog</button>
+            <button class="dialogToggle" data-dialog-target="js-dialog-lol" data-dialog-title="Dialog Title" data-dialog-modal="true">Modal, with title</button>
         </div>
         <div class="makeDialog js-dialog-test">
             <div class="box">
