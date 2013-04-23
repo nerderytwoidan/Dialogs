@@ -22,19 +22,24 @@ APP.Dialog = {
     $overlay: undefined,
     $dialog: undefined,
     $dialogHead: undefined,
+    $dialogHeading: undefined,
     $dialogContent: undefined,
 
+    isModal: false,
+    dialogTitle: '',
+
     CONTENT_DATA_SELECTOR: 'dialog-target',
-    TITLE_DATA_SELECTOR:  'dialog-title',
+    TITLE_DATA_SELECTOR:   'dialog-title',
     MODAL_DATA_SELECTOR:   'dialog-modal',
 
     WRAP_ID:            'js-dialogWrap',
     OVERLAY_ID:         'js-dialogOverlay',
     WRAP_HEAD_CLASS:    'dialog-head',
+    HEADING_CLASS:      'dialog-head-heading',
     WRAP_CONTENT_CLASS: 'dialog-content',
 
-    WRAP_TEMPLATE:    '<div id="js-dialogWrap" class="dialog"><div class="dialog-head"></div><div class="dialog-content"></div></div>',
-    OVERLAY_TEMPLATE: '<div id="js-dialogOverlay" class="dialogOverlay"></div>',
+    WRAP_TEMPLATE:    '<div id="js-dialogWrap" class="dialog"><div class="dialog-head"><span class="dialog-head-heading"></span></div><div class="dialog-content"></div></div>',
+    OVERLAY_TEMPLATE: '<div id="js-dialogOverlay" class="dialogOverlay" style="display: none;"></div>',
     CLOSE_TEMPLATE:   '<a href="#" class="dialog-close">Close</a>',
     CLOSE_BUTTON_CLASS: 'dialog-close',
     DIALOG_OPEN_CLASS:  'dialog_isOpen',
@@ -46,6 +51,7 @@ APP.Dialog = {
         if (this.$contents.jquery && this.$toggles.jquery) {
             this.hideContents();
             this.spawnWrapper();
+            this.spawnOverlay();
             this.bind();
         }
     },
@@ -61,27 +67,29 @@ APP.Dialog = {
             if (targetContentClass) {
                 var $targetEle = $('.' + targetContentClass);
 
+                // Specified as modal
                 if ($(this).data(self.MODAL_DATA_SELECTOR) === true) {
-                    self.spawnOverlay();
-                    var isModal = true;
-
-                    self.fillContent($targetEle);
-                    self.toggleVisibility(true);
-                } else {
-                    self.fillContent($targetEle);
-                    self.toggleVisibility(false);
+                    this.isModal = true;
                 }
 
+                // Set title string
+                if ($(this).data(this.TITLE_DATA_SELECTOR) !== '') {
+                    this.dialogTitle = $(this).data(this.TITLE_DATA_SELECTOR);
+                }
 
+                self.fillContent($targetEle);
+                self.fillTitle(this.dialogTitle);
+                self.toggleVisibility(this.isModal);
             } else {
                 self.toggleVisibility();
+                throw('You need to specify a target container on your toggle element!');
             }
         });
 
         var $closeButton = this.$dialogHead.find('.' + this.CLOSE_BUTTON_CLASS);
         $closeButton.on('click', function (e) {
             e.preventDefault();
-            self.toggleVisibility();
+            self.toggleVisibility(true);
         });
     },
 
@@ -99,6 +107,7 @@ APP.Dialog = {
 
         this.$dialogHead = this.$dialog.find("." + this.WRAP_HEAD_CLASS);
         this.$dialogHead.append(this.CLOSE_TEMPLATE);
+        this.$dialogHeading = this.$dialogHead.find('.' + this.HEADING_CLASS);
         this.$dialogContent = this.$dialog.find("." + this.WRAP_CONTENT_CLASS);
     },
 
@@ -112,18 +121,21 @@ APP.Dialog = {
     },
 
     toggleVisibility: function (isModal) {
-        if (this.$dialog.hasClass(this.DIALOG_OPEN_CLASS) && isModal) {
+        if (this.$dialog.hasClass(this.DIALOG_OPEN_CLASS)) {
             this.$dialog.removeClass(this.DIALOG_OPEN_CLASS);
             this.$dialog.hide();
-            this.$overlay.hide();
-        } else if (this.$dialog.hasClass(this.DIALOG_OPEN_CLASS)) {
+            this.$dialogHeading.text('');
+
+            if (isModal) {
+                this.$overlay.hide();
+            }
+        } else {
             this.$dialog.addClass(this.DIALOG_OPEN_CLASS);
             this.$dialog.show();
-            this.$overlay.show();
-        } else if (this.$dialog.hasClass(this.DIALOG_OPEN_CLASS)) {
 
-        } else {
-
+            if (isModal) {
+                this.$overlay.show();
+            }
         }
     },
 
@@ -132,6 +144,15 @@ APP.Dialog = {
 
         this.$dialogContent.empty();
         this.$dialogContent.html(contentBucket);
+    },
+
+    fillTitle: function (titleString) {
+        if (titleString === '') {
+            return;
+        } else {
+            var titleMarkup =  '<span class="dialog-head-heading">' + titleString + '</span>';
+            this.$dialogHead.prepend(titleMarkup);
+        }
     }
 };
 
