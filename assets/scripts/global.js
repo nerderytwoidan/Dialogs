@@ -80,6 +80,7 @@ APP.Dialog = {
                 self.fillContent($targetEle);
                 self.fillTitle(self.dialogTitle);
                 self.toggleVisibility(isModal);
+                self.position();
             } else {
                 self.toggleVisibility();
                 throw('You need to specify a target container on your toggle element!');
@@ -132,7 +133,6 @@ APP.Dialog = {
             this.$dialog.show();
 
             if (isModal) {
-                console.log('is modal');
                 this.$overlay.show();
             }
         }
@@ -151,6 +151,14 @@ APP.Dialog = {
         } else {
             this.$dialogHeading.text(titleString);
         }
+    },
+
+    position: function () {
+        this.$dialog.css({
+            'position': 'absolute',
+            'top': ($(window).height() / 2) - (this.$dialog.outerHeight() / 2),
+            'left': ($(window).width() / 2) - (this.$dialog.outerWidth() / 2)
+        });
     }
 };
 
