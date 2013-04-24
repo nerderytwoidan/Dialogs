@@ -25,7 +25,6 @@ APP.Dialog = {
     $dialogHeading: undefined,
     $dialogContent: undefined,
 
-    isModal: false,
     dialogTitle: '',
 
     CONTENT_DATA_SELECTOR: 'dialog-target',
@@ -66,26 +65,28 @@ APP.Dialog = {
 
             if (targetContentClass) {
                 var $targetEle = $('.' + targetContentClass);
+                var isModal = false;
 
                 // Specified as modal
                 if ($(this).data(self.MODAL_DATA_SELECTOR) === true) {
-                    this.isModal = true;
+                    isModal = true;
                 }
 
                 // Set title string
-                if ($(this).data(this.TITLE_DATA_SELECTOR) !== '') {
-                    this.dialogTitle = $(this).data(this.TITLE_DATA_SELECTOR);
+                if ($(this).data(self.TITLE_DATA_SELECTOR) !== '') {
+                    self.dialogTitle = $(this).data(self.TITLE_DATA_SELECTOR);
                 }
 
                 self.fillContent($targetEle);
-                self.fillTitle(this.dialogTitle);
-                self.toggleVisibility(this.isModal);
+                self.fillTitle(self.dialogTitle);
+                self.toggleVisibility(isModal);
             } else {
                 self.toggleVisibility();
                 throw('You need to specify a target container on your toggle element!');
             }
         });
 
+        // Bind close button to close
         var $closeButton = this.$dialogHead.find('.' + this.CLOSE_BUTTON_CLASS);
         $closeButton.on('click', function (e) {
             e.preventDefault();
@@ -125,15 +126,13 @@ APP.Dialog = {
             this.$dialog.removeClass(this.DIALOG_OPEN_CLASS);
             this.$dialog.hide();
             this.$dialogHeading.text('');
-
-            if (isModal) {
-                this.$overlay.hide();
-            }
+            this.$overlay.hide();
         } else {
             this.$dialog.addClass(this.DIALOG_OPEN_CLASS);
             this.$dialog.show();
 
             if (isModal) {
+                console.log('is modal');
                 this.$overlay.show();
             }
         }
@@ -150,8 +149,7 @@ APP.Dialog = {
         if (titleString === '') {
             return;
         } else {
-            var titleMarkup =  '<span class="dialog-head-heading">' + titleString + '</span>';
-            this.$dialogHead.prepend(titleMarkup);
+            this.$dialogHeading.text(titleString);
         }
     }
 };
