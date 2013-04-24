@@ -93,6 +93,12 @@ APP.Dialog = {
             e.preventDefault();
             self.toggleVisibility(true);
         });
+
+        // Bind close button to close
+        var resizeDelay;
+        $(window).resize(function (e) {
+            self.position();
+        });
     },
 
     hideContents: function () {
